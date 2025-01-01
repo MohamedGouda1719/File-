@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+خ<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -33,14 +33,23 @@
   <script src="script.js"></script>
   <script>
 
-// Function to check if all files are loaded
-function checkFilesLoaded() {
-  return (
-    'serviceWorker' in navigator &&
-    'showDirectoryPicker' in window &&
-    document.querySelector('link[rel="manifest"]') &&
-    document.querySelector('script[src="./script.js"]') !== null
-  );
+// Function to check if a file exists and is loaded
+function isFileLoaded(filePath) {
+  return document.querySelector(`script[src="${filePath}"]`) !== null ||
+         document.querySelector(`link[href="${filePath}"]`) !== null;
+}
+
+// Function to check if all required files are loaded
+function checkFilesLoaded(files) {
+  const results = files.map(file => ({
+    file,
+    status: isFileLoaded(file) ? 'Loaded' : 'Loading'  // Check status
+  }));
+  
+  // If any file fails to load
+  const hasFailed = results.some(file => file.status === 'Loading');
+
+  return { results, hasFailed };
 }
 
 // Function to show a message
@@ -59,11 +68,30 @@ function showMessage(message) {
   body.appendChild(msgElement);
 }
 
-// Check if all required files are loaded
-if (checkFilesLoaded()) {
-  showMessage('All files are loaded successfully!');
+// List of files to check
+const requiredFiles = [
+  './manifest.json',
+  './script.js',
+  './service-worker.js',
+  './icon-192x192.png',
+  './icon-512x512.png'
+];
+
+// Check if all files are loaded
+const { results, hasFailed } = checkFilesLoaded(requiredFiles);
+
+// Display status of each file
+results.forEach(fileResult => {
+  const fileItem = document.createElement('div');
+  fileItem.innerText = `${fileResult.file}: ${fileResult.status}`;
+  document.body.appendChild(fileItem);
+});
+
+// Display overall message
+if (!hasFailed) {
+  showMessage('All required files are loaded successfully!');
 } else {
-  showMessage('Files are still loading, please wait...');
+  showMessage('Some files are still loading or failed to load.');
     }
 
     
