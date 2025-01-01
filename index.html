@@ -31,5 +31,42 @@
   <ul id="file-list"></ul>
 
   <script src="script.js"></script>
+  <script>
+
+// Function to check if all files are loaded
+function checkFilesLoaded() {
+  return (
+    'serviceWorker' in navigator &&
+    'showDirectoryPicker' in window &&
+    document.querySelector('link[rel="manifest"]') &&
+    document.querySelector('script[src="./script.js"]') !== null
+  );
+}
+
+// Function to show a message
+function showMessage(message) {
+  const body = document.querySelector('body');
+  const msgElement = document.createElement('div');
+  msgElement.style.position = 'fixed';
+  msgElement.style.top = '50%';
+  msgElement.style.left = '50%';
+  msgElement.style.transform = 'translate(-50%, -50%)';
+  msgElement.style.backgroundColor = 'white';
+  msgElement.style.padding = '20px';
+  msgElement.style.border = '1px solid black';
+  msgElement.style.zIndex = '1000';
+  msgElement.innerText = message;
+  body.appendChild(msgElement);
+}
+
+// Check if all required files are loaded
+if (checkFilesLoaded()) {
+  showMessage('All files are loaded successfully!');
+} else {
+  showMessage('Files are still loading, please wait...');
+    }
+
+    
+  </script>
 </body>
 </html>
